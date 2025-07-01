@@ -1,4 +1,3 @@
-
 # 🛡️ Wazuh Log Collector API
 
 [![Node.js](https://img.shields.io/badge/Node.js-18.x-brightgreen.svg)](https://nodejs.org)
@@ -41,29 +40,38 @@ cd wazuh-log-collector
 docker build -t wazuh-log-collector .
 
 # Run with environment variables
-docker run -p 3000:3000 \
-  -e DATABASE_URL=postgres://user:pass@host:5432/logsdb \
-  -e API_KEY=your_api_key_here \
-  wazuh-log-collector
+docker run -p 3000:3000   -e DATABASE_URL=postgres://user:pass@host:5432/logsdb   -e API_KEY=your_api_key_here   wazuh-log-collector
+```
 
+---
 
+## 🔧 Local Setup
 
-
-🔧 Local Setup
+```bash
 git clone https://github.com/your-user/wazuh-log-collector.git
 cd wazuh-log-collector
 npm install
 cp .env.example .env
 npm start
+```
 
+---
 
-🔐 Authentication
+## 🔐 Authentication
+
+All requests to `/logs` require an `x-api-key` header:
+
+```http
 POST /logs
 x-api-key: your_api_key
 Content-Type: application/json
+```
 
+---
 
-📬 Example Payload
+## 📬 Example Payload
+
+```json
 {
   "source": "victimpi",
   "sourceIp": "192.168.1.37",
@@ -74,11 +82,15 @@ Content-Type: application/json
     "srcip": "192.168.1.37"
   }
 }
+```
 
+---
 
-🧩 Wazuh Integration (Active Response)
-Wazuh Config (ossec.conf):
+## 🧩 Wazuh Integration (Active Response)
 
+**Wazuh Config (`ossec.conf`):**
+
+```xml
 <command>
   <name>forward-log</name>
   <executable>forward-log.sh</executable>
@@ -90,8 +102,11 @@ Wazuh Config (ossec.conf):
   <location>local</location>
   <level>5</level>
 </active-response>
+```
 
-forward-log.sh Example:
+**forward-log.sh Example:**
+
+```bash
 #!/bin/bash
 ALERT=$(cat)
 LEVEL=$(echo "$ALERT" | jq -r '.parameters.alert.rule.level // "info"')
@@ -99,14 +114,14 @@ SOURCE=$(echo "$ALERT" | jq -r '.parameters.alert.agent.name')
 SRCIP=$(echo "$ALERT" | jq -r '.parameters.alert.data.srcip')
 MESSAGE=$(echo "$ALERT" | jq -r '.parameters.alert.rule.description')
 
-curl -X POST http://localhost:3000/logs \
-  -H "Content-Type: application/json" \
-  -H "x-api-key: your_api_key" \
-  -d "{\"source\":\"$SOURCE\",\"sourceIp\":\"$SRCIP\",\"level\":\"$LEVEL\",\"message\":\"$MESSAGE\",\"metadata\":$ALERT}"
+curl -X POST http://localhost:3000/logs   -H "Content-Type: application/json"   -H "x-api-key: your_api_key"   -d "{"source":"$SOURCE","sourceIp":"$SRCIP","level":"$LEVEL","message":"$MESSAGE","metadata":$ALERT}"
+```
 
+---
 
+## 📁 Project Structure
 
-📁 Project Structure
+```
 log-collector/
 ├── server.js
 ├── models/
@@ -116,13 +131,19 @@ log-collector/
 ├── logs/
 ├── Dockerfile
 ├── .env.example
+```
 
-🛠️ Future Improvements
-API key rotation system
-Alert severity email/Slack notification
-Dashboard frontend (React)
-Webhook support
+---
 
+## 🛠️ Future Improvements
 
-📄 License
-MIT © Ashab Tariq
+- API key rotation system
+- Alert severity email/Slack notification
+- Dashboard frontend (React)
+- Webhook support
+
+---
+
+## 📄 License
+
+MIT © [Ashab Tariq](https://github.com/ashabtariq)
