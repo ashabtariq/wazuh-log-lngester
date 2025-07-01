@@ -35,7 +35,7 @@
 
 ```bash
 # Clone and build the image
-git clone https://github.com/your-user/wazuh-log-collector.git
+git clone https://github.com/ashabtariq/wazuh-log-lngester.git
 cd wazuh-log-collector
 docker build -t wazuh-log-collector .
 
@@ -48,7 +48,7 @@ docker run -p 3000:3000   -e DATABASE_URL=postgres://user:pass@host:5432/logsdb 
 ## 🔧 Local Setup
 
 ```bash
-git clone https://github.com/your-user/wazuh-log-collector.git
+git clone https://github.com/ashabtariq/wazuh-log-lngester.git
 cd wazuh-log-collector
 npm install
 cp .env.example .env
