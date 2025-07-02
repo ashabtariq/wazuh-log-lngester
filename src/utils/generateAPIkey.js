@@ -1,4 +1,10 @@
 import crypto from 'crypto';
 
-const apiKey = crypto.randomBytes(32).toString('hex');
-console.log('🔑 Your static API key:', apiKey);
+
+const genAPIkey = async(req,res)=>{
+    const apiKey = crypto.randomBytes(32).toString('hex');
+    res.status(200).json({API_KEY: apiKey})
+    console.log('🔑 Your static API key:', apiKey);
+
+}
+export default genAPIkey;
