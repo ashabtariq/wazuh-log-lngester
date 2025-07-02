@@ -1,9 +1,27 @@
+import IPDB from "../models/IPDB.js";
 import Log from '../models/Log.js';
+import { IPinfoWrapper } from "node-ipinfo";
+
+
+const ipinfoWrapper = new IPinfoWrapper(process.env.IP_INFO_TOKEN);
+
 
 export const ingestLog = async (req, res) => {
   try {
     const WHITELISTT_RULES = process.env.RULE_IDS.split(',');
     const { source, level, message, metadata, sourceIp } = req.body;
+
+    const ipinfo = await ipinfoWrapper.lookupIp(sourceIp);
+    if(ipinfo.bogon =! true){
+      const countryCode = ipinfo.countryCode;
+      const country = ipinfo.country;
+      const ipdb  = await IPDB.create({sourceIp , countryCode, country}) 
+      res.json(ipdb)
+    }
+    else{
+      console.log("IP Is private")
+    }
+    
 
     console.log('📥 Incoming log:', { source, level, message, metadata });
 
